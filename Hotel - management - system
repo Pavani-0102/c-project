@@ -1,1 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ROOMS 10
+
+// Define a structure for room details
+typedef struct {
+    int roomNumber;
+    int isOccupied;  // 0: Available, 1: Occupied
+    char customerName[50];
+} Room;
+
+// Function to initialize the rooms
+void initializeRooms(Room rooms[]) {
+    for (int i = 0; i < MAX_ROOMS; i++) {
+        rooms[i].roomNumber = i + 1;
+        rooms[i].isOccupied = 0;
+        rooms[i].customerName[0] = '\0';  // Empty name initially
+    }
+}
+
+// Function to check in a customer
+void checkIn(Room rooms[]) {
+    int roomNum;
+    char name[50];
+
+    printf("\nEnter the room number to check-in (1-%d): ", MAX_ROOMS);
+    scanf("%d", &roomNum);
+
+    if (roomNum < 1 || roomNum > MAX_ROOMS) {
+        printf("Invalid room number.\n");
+        return;
+    }
+
+    if (rooms[roomNum - 1].isOccupied == 1) {
+        printf("Sorry, this room is already occupied.\n");
+        return;
+    }
+
+    printf("Enter the customer's name: ");
+    getchar();  // To consume the newline character left by scanf
+    fgets(name, sizeof(name), stdin);
+    
+    // Remove the trailing newline from fgets
+    name[strcspn(name, "\n")] = 0;
+
+    rooms[roomNum - 1].isOccupied = 1;
+    snprintf(rooms[roomNum - 1].customerName, sizeof(rooms[roomNum - 1].customerName), "%s", name);
+    printf("Check-in successful for %s in room %d.\n", name, roomNum);
+}
+
+// Function to check out a customer
+void checkOut(Room rooms[]) {
+    int roomNum;
+
+    printf("\nEnter the room number to check-out (1-%d): ", MAX_ROOMS);
+    scanf("%d", &roomNum);
+
+    if (roomNum < 1 || roomNum > MAX_ROOMS) {
+        printf("Invalid room number.\n");
+        return;
+    }
+
+    if (rooms[roomNum - 1].isOccupied == 0) {
+        printf("This room is not occupied.\n");
+        return;
+    }
+
+    printf("Check-out successful for %s from room %d.\n", rooms[roomNum - 1].customerName, roomNum);
+    rooms[roomNum - 1].isOccupied = 0;
+    rooms[roomNum - 1].customerName[0] = '\0';  // Clear the customer name
+}
+
+// Function to display room status
+void displayRooms(Room rooms[]) {
+    printf("\nRoom status:\n");
+    for (int i = 0; i < MAX_ROOMS; i++) {
+        printf("Room %d: ", rooms[i].roomNumber);
+        if (rooms[i].isOccupied) {
+            printf("Occupied by %s\n", rooms[i].customerName);
+        } else {
+            printf("Available\n");
+        }
+    }
+}
+
+int main() {
+    Room rooms[MAX_ROOMS];
+    int choice;
+
+    // Initialize the rooms
+    initializeRooms(rooms);
+
+    do {
+        printf("\nHotel Management System\n");
+        printf("1. Check-in\n");
+        printf("2. Check-out\n");
+        printf("3. Display room status\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                checkIn(rooms);
+                break;
+            case 2:
+                checkOut(rooms);
+                break;
+            case 3:
+                displayRooms(rooms);
+                break;
+            case 4:
+                printf("Exiting the system.\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
 
